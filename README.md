@@ -6,5 +6,5 @@ la base de datos en su phpMyAdmin la cual debe llamarse "negocio", cabe recalcar
 
 
 <p align="center">
-  <img src="https://tenor.com/es-419/view/cool-verycute-cute-dancing-cyte-dancing-gif-18419613755250334503" width="700"/>
+  <img src="https://media.tenor.com/_5-dHn2YWycAAAAj/cool-verycute.gif" width="300"/>
 </p>
