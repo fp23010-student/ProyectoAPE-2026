@@ -603,6 +603,7 @@ public class frmProducto extends javax.swing.JFrame {
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         this.dispose();
+        new frmMenu().setVisible(true);
     }//GEN-LAST:event_btnCerrarActionPerformed
 
     public static void main(String args[]) {
