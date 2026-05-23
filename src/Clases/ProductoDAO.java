@@ -127,4 +127,26 @@ public class ProductoDAO {
         return lista;
     }
 
+    public List<Producto> listarPorCategoria(String idCategoria) {
+        List<Producto> lista = new java.util.ArrayList<>();
+        String sql = "SELECT idProducto, nombre, precio, idCategoria, descripcion "
+                + "FROM producto WHERE idCategoria = ? ORDER BY nombre ASC";
+        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, idCategoria);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setIdProducto(rs.getInt("idProducto"));
+                p.setNombreProducto(rs.getString("nombre"));
+                p.setPrecioProducto(String.valueOf(rs.getDouble("precio")));
+                p.setIdCategoria(String.valueOf(rs.getInt("idCategoria")));
+                p.setDescripcionProducto(rs.getString("descripcion"));
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error listarPorCategoria: " + e.getMessage());
+        }
+        return lista;
+    }
+
 }

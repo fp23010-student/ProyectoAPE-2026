@@ -1,21 +1,178 @@
-
 package Formularios;
 
+import Clases.Categoria;
+import Clases.CategoriaDAO;
+import Clases.Combo;
+import Clases.ComboDAO;
+import Clases.DetalleOrden;
+import Clases.Item;
+import Clases.Mesa;
+import Clases.MesaDAO;
+import Clases.Orden;
+import Clases.OrdenDAO;
+import Clases.OrdenService;
+import Clases.Producto;
+import Clases.ProductoDAO;
+import Clases.Sesion;
+import Clases.TicketPDF;
+import Clases.Usuario;
 import java.awt.Image;
+import java.awt.event.ItemEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class frmOrden extends javax.swing.JFrame {
+
+    private OrdenService ordenService = new OrdenService();
+    private OrdenDAO ordenDAO = new OrdenDAO();
+    private MesaDAO mesaDAO = new MesaDAO();
+    private CategoriaDAO categoriaDAO = new CategoriaDAO();
+    private Orden ordenActual = new Orden();
 
     public frmOrden() {
         initComponents();
         this.setLocationRelativeTo(null);
-                ImageIcon originalIcon = new ImageIcon(getClass().getResource("/Imagenes/tacoSinFondo.png"));
+
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource("/Imagenes/tacoSinFondo.png"));
         Image scaledImage = originalIcon.getImage().getScaledInstance(
-        lblLogo.getWidth(),
-        lblLogo.getHeight(),
-        Image.SCALE_SMOOTH
-        );
+                lblLogo.getWidth(), lblLogo.getHeight(), Image.SCALE_SMOOTH);
         lblLogo.setIcon(new ImageIcon(scaledImage));
+
+        configurarTabla();
+        cargarDatosIniciales();
+        configurarEventoCmbCategoria();
+    }
+
+    private void configurarTabla() {
+        DefaultTableModel modelo = new DefaultTableModel(
+                new String[]{"#", "Descripción", "Precio Unit.", "Cantidad", "Subtotal"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // toda la tabla de solo lectura
+            }
+        };
+        tblDetalle.setModel(modelo);
+
+        // Anchos de columna
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(160);
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(70);
+        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(50);
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(70);
+    }
+
+    private void cargarDatosIniciales() {
+        txtIDOrdeen.setText(String.valueOf(ordenDAO.obtenerProximoId()));
+        txtIDOrdeen.setEditable(false);
+
+        txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                .format(new java.util.Date()));
+        txtFechaHora.setEditable(false);
+
+        Usuario u = Sesion.getUsuarioActual();
+        txtUsuario.setText(u.getNombre() + " " + u.getApellido());
+        txtUsuario.setEditable(false);
+
+        txtTotal.setEditable(false);
+        txtTotal.setText("0.00");
+
+        cargarMesas();
+        cargarCategorias();
+    }
+
+    private void configurarEventoCmbCategoria() {
+        cmbCategoria.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                Object seleccion = cmbCategoria.getSelectedItem();
+                if (seleccion == null) {
+                    return;
+                }
+
+                if (seleccion instanceof String) {
+                    // Es "-- Combos --"
+                    cargarCombos();
+                } else {
+                    Categoria cat = (Categoria) seleccion;
+                    cargarProductosPorCategoria(cat.getIdCategoria()); // ya es String
+                }
+            }
+        });
+    }
+
+    private void cargarMesas() {
+        ArrayList<Mesa> mesas = mesaDAO.listarMesasLibres();
+        DefaultComboBoxModel<Mesa> modelo = new DefaultComboBoxModel<>();
+        for (Mesa m : mesas) {
+            modelo.addElement(m);
+        }
+        cmbMesa.setModel(modelo);
+    }
+
+    private void cargarCategorias() {
+        DefaultComboBoxModel<Object> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement("-- Combos --");
+
+        CategoriaDAO categoriaDAO = new CategoriaDAO();
+        List<Categoria> cats = categoriaDAO.listar(); // listar() no listarTodos()
+        for (Categoria c : cats) {
+            modelo.addElement(c);
+        }
+        cmbCategoria.setModel(modelo);
+        cargarCombos(); // por defecto carga combos al abrir
+    }
+
+    private void cargarCombos() {
+        ComboDAO comboDAO = new ComboDAO();
+        List<Combo> combos = comboDAO.listarCombos(""); // listarCombos("") no listarTodos()
+
+        DefaultComboBoxModel<Item> modelo = new DefaultComboBoxModel<>();
+        for (Combo c : combos) {
+            modelo.addElement(new Item(c.getIdCombo(), c.getCombo(), c.getPrecioCombo(), true));
+        }
+        cmbProudcto_Combo.setModel(modelo);
+    }
+
+    private void cargarProductosPorCategoria(String idCategoria) { // String no int
+        ProductoDAO productoDAO = new ProductoDAO();
+        List<Producto> productos = productoDAO.listarPorCategoria(idCategoria);
+
+        DefaultComboBoxModel<Item> modelo = new DefaultComboBoxModel<>();
+        for (Producto p : productos) {
+            modelo.addElement(new Item(
+                    p.getIdProducto(),
+                    p.getNombreProducto(),
+                    Double.parseDouble(p.getPrecioProducto()), // precioProducto es String
+                    false
+            ));
+        }
+        cmbProudcto_Combo.setModel(modelo);
+    }
+
+    private void limpiarFormulario() {
+        ordenActual = new Orden();
+
+        // Limpiar tabla
+        ((DefaultTableModel) tblDetalle.getModel()).setRowCount(0);
+
+        // Resetear total
+        txtTotal.setText("0.00");
+
+        // Nuevo ID próximo
+        txtIDOrdeen.setText(String.valueOf(ordenDAO.obtenerProximoId()));
+
+        // Nueva fecha
+        txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                .format(new java.util.Date()));
+
+        // Recargar mesas (la que se ocupó ya no aparece)
+        cargarMesas();
+
+        // Resetear spinner
+        spnCantidad.setValue(1);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +214,6 @@ public class frmOrden extends javax.swing.JFrame {
 
         jLabel4.setText("Categoria:");
 
-        cmbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbCategoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbCategoriaActionPerformed(evt);
@@ -68,9 +224,12 @@ public class frmOrden extends javax.swing.JFrame {
 
         jLabel6.setText("Cantidad:");
 
-        cmbProudcto_Combo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
 
         tblDetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -86,12 +245,15 @@ public class frmOrden extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblDetalle);
 
         btnProcesar.setText("Procesar");
+        btnProcesar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProcesarActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Total $:");
 
         jLabel8.setText("Mesa:");
-
-        cmbMesa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,6 +351,74 @@ public class frmOrden extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbCategoriaActionPerformed
 
+    private void btnProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcesarActionPerformed
+        if (!ordenActual.tieneDetalles()) {
+            JOptionPane.showMessageDialog(this, "Agregue al menos un producto a la orden.");
+            return;
+        }
+
+        Mesa mesa = (Mesa) cmbMesa.getSelectedItem();
+        if (mesa == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una mesa.");
+            return;
+        }
+
+        Usuario u = Sesion.getUsuarioActual();
+        ordenActual.setIdUsuario(u.getIdUsuario());
+        ordenActual.setNombreUsuario(u.getNombre() + " " + u.getApellido());
+        ordenActual.setIdMesa(mesa.getIdMesa());
+        ordenActual.setNumeroMesa(mesa.getNumero());
+        ordenActual.setFechaHora(new java.util.Date());
+
+        int idOrden = ordenService.procesarOrden(ordenActual);
+
+        if (idOrden > 0) {
+            new TicketPDF().generarTicket(idOrden);
+            ordenService.liberarMesa(mesa.getIdMesa());
+            JOptionPane.showMessageDialog(this,
+                    "Orden #" + idOrden + " procesada correctamente.\nTicket generado.");
+            limpiarFormulario();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Error al procesar la orden. Intente de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnProcesarActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        Item itemSeleccionado = (Item) cmbProudcto_Combo.getSelectedItem();
+        if (itemSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un producto o combo.");
+            return;
+        }
+
+        int cantidad = (int) spnCantidad.getValue();
+        if (cantidad <= 0) {
+            JOptionPane.showMessageDialog(this, "La cantidad debe ser mayor a 0.");
+            return;
+        }
+
+        // Crear detalle y agregarlo a la orden
+        DetalleOrden detalle = new DetalleOrden(0, itemSeleccionado, cantidad);
+        ordenActual.agregarDetalle(detalle);  // esto asigna idLinea y recalcula total
+
+        // Agregar fila a la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
+        modelo.addRow(new Object[]{
+            detalle.getIdLinea(),
+            detalle.getNombre(),
+            String.format("$%.2f", detalle.getPrecioUnitario()),
+            detalle.getCantidad(),
+            String.format("$%.2f", detalle.getSubtotal())
+        });
+
+        // Actualizar total en pantalla
+        txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
+
+        // Resetear spinner
+        spnCantidad.setValue(1);
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -224,9 +454,9 @@ public class frmOrden extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnProcesar;
-    private javax.swing.JComboBox<String> cmbCategoria;
-    private javax.swing.JComboBox<String> cmbMesa;
-    private javax.swing.JComboBox<String> cmbProudcto_Combo;
+    private javax.swing.JComboBox<Object> cmbCategoria;
+    private javax.swing.JComboBox<Mesa> cmbMesa;
+    private javax.swing.JComboBox<Item> cmbProudcto_Combo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

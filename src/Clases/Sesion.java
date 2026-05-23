@@ -1,7 +1,8 @@
 package Clases;
 
 public class Sesion {
-        private static Usuario usuarioActual;
+
+    private static Usuario usuarioActual;
 
     public static void iniciarSesion(Usuario usuario) {
         usuarioActual = usuario;
