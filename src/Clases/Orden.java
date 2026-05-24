@@ -11,7 +11,6 @@ public class Orden {
     private String nombreUsuario;
     private int idMesa;
     private int numeroMesa;
-    private double total;
     private ArrayList<DetalleOrden> detalles;
 
     public Orden() {
@@ -21,22 +20,22 @@ public class Orden {
     public void agregarDetalle(DetalleOrden detalle) {
         detalle.setIdLinea(detalles.size() + 1);
         detalles.add(detalle);
-        recalcularTotal();
     }
 
     public void eliminarDetalle(int index) {
         detalles.remove(index);
-        // Reajustar números de línea
         for (int i = 0; i < detalles.size(); i++) {
             detalles.get(i).setIdLinea(i + 1);
         }
-        recalcularTotal();
     }
 
-    private void recalcularTotal() {
-        this.total = detalles.stream()
-                .mapToDouble(DetalleOrden::getSubtotal)
-                .sum();
+    // Un solo getTotal() que siempre calcula en tiempo real
+    public double getTotal() {
+        double suma = 0;
+        for (DetalleOrden d : detalles) {
+            suma += d.getSubtotal();
+        }
+        return suma;
     }
 
     public boolean tieneDetalles() {
@@ -91,20 +90,11 @@ public class Orden {
         this.numeroMesa = numeroMesa;
     }
 
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
     public ArrayList<DetalleOrden> getDetalles() {
         return detalles;
     }
 
     public void setDetalles(ArrayList<DetalleOrden> detalles) {
         this.detalles = detalles;
-        recalcularTotal();
     }
 }

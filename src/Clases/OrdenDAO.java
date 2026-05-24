@@ -53,7 +53,7 @@ public class OrdenDAO {
                 orden = new Orden();
                 orden.setIdOrden(rs.getInt("idOrden"));
                 orden.setFechaHora(rs.getTimestamp("fechaHora"));
-                orden.setTotal(rs.getDouble("total"));
+//                orden.setTotal(rs.getDouble("total"));
                 orden.setNombreUsuario(rs.getString("nombre") + " " + rs.getString("apellido"));
                 orden.setNumeroMesa(rs.getInt("numeroMesa"));
 

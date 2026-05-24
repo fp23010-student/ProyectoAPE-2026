@@ -32,6 +32,7 @@ public class frmOrden extends javax.swing.JFrame {
     private MesaDAO mesaDAO = new MesaDAO();
     private CategoriaDAO categoriaDAO = new CategoriaDAO();
     private Orden ordenActual = new Orden();
+    private boolean actualizandoTabla = false; // variable de instancia
 
     public frmOrden() {
         initComponents();
@@ -52,17 +53,82 @@ public class frmOrden extends javax.swing.JFrame {
                 new String[]{"#", "Descripción", "Precio Unit.", "Cantidad", "Subtotal"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // toda la tabla de solo lectura
+                return column == 3; // solo columna Cantidad editable
             }
         };
         tblDetalle.setModel(modelo);
-
-        // Anchos de columna
+        tblDetalle.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(30);
         tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(160);
         tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(70);
         tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(50);
         tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(70);
+
+        // Tecla Suprimir para eliminar fila seleccionada
+        tblDetalle.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
+                    int fila = tblDetalle.getSelectedRow();
+                    if (fila >= 0) {
+                        ordenActual.eliminarDetalle(fila);
+                        ((DefaultTableModel) tblDetalle.getModel()).removeRow(fila);
+                        reordenarNumeros();
+                        txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
+                    }
+                }
+            }
+        });
+
+        // Escuchar cambios en la columna Cantidad
+        modelo.addTableModelListener(e -> {
+            if (actualizandoTabla) {
+                return; // ignorar cambios programáticos
+            }
+            if (e.getColumn() == 3 && e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+                int fila = e.getFirstRow();
+                if (fila < 0 || fila >= ordenActual.getDetalles().size()) {
+                    return;
+                }
+
+                try {
+                    Object valor = tblDetalle.getModel().getValueAt(fila, 3);
+                    int nuevaCantidad = Integer.parseInt(valor.toString().trim());
+                    DetalleOrden detalle = ordenActual.getDetalles().get(fila);
+
+                    if (nuevaCantidad <= 0) {
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            ordenActual.eliminarDetalle(fila);
+                            ((DefaultTableModel) tblDetalle.getModel()).removeRow(fila);
+                            reordenarNumeros();
+                            txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
+                        });
+                    } else {
+                        detalle.setCantidad(nuevaCantidad);
+                        actualizandoTabla = true; // bloquear antes de setValueAt
+                        tblDetalle.getModel().setValueAt(
+                                String.format("$%.2f", detalle.getSubtotal()), fila, 4);
+                        actualizandoTabla = false; // desbloquear
+                        txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
+                    }
+
+                } catch (NumberFormatException ex) {
+                    if (fila < ordenActual.getDetalles().size()) {
+                        actualizandoTabla = true;
+                        tblDetalle.getModel().setValueAt(
+                                ordenActual.getDetalles().get(fila).getCantidad(), fila, 3);
+                        actualizandoTabla = false;
+                    }
+                }
+            }
+        });
+    }
+
+    private void reordenarNumeros() {
+        DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            modelo.setValueAt(i + 1, i, 0);
+        }
     }
 
     private void cargarDatosIniciales() {
@@ -74,7 +140,7 @@ public class frmOrden extends javax.swing.JFrame {
         txtFechaHora.setEditable(false);
 
         Usuario u = Sesion.getUsuarioActual();
-        txtUsuario.setText(u.getNombre() + " " + u.getApellido());
+        txtUsuario.setText(u.toString());
         txtUsuario.setEditable(false);
 
         txtTotal.setEditable(false);
@@ -114,7 +180,7 @@ public class frmOrden extends javax.swing.JFrame {
 
     private void cargarCategorias() {
         DefaultComboBoxModel<Object> modelo = new DefaultComboBoxModel<>();
-        modelo.addElement("-- Combos --");
+        modelo.addElement("Combos");
 
         CategoriaDAO categoriaDAO = new CategoriaDAO();
         List<Categoria> cats = categoriaDAO.listar(); // listar() no listarTodos()
@@ -280,13 +346,12 @@ public class frmOrden extends javax.swing.JFrame {
                             .addComponent(jLabel1)
                             .addComponent(jLabel3)
                             .addComponent(jLabel2))
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtFechaHora, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtIDOrdeen, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(54, 54, 54)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtIDOrdeen, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtFechaHora, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                            .addComponent(txtUsuario))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
@@ -391,19 +456,37 @@ public class frmOrden extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un producto o combo.");
             return;
         }
-
         int cantidad = (int) spnCantidad.getValue();
         if (cantidad <= 0) {
             JOptionPane.showMessageDialog(this, "La cantidad debe ser mayor a 0.");
             return;
         }
-
-        // Crear detalle y agregarlo a la orden
-        DetalleOrden detalle = new DetalleOrden(0, itemSeleccionado, cantidad);
-        ordenActual.agregarDetalle(detalle);  // esto asigna idLinea y recalcula total
-
-        // Agregar fila a la tabla
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
+
+        // Buscar si el item ya existe en la tabla
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            String nombreFila = modelo.getValueAt(i, 1).toString();
+            if (nombreFila.equals(itemSeleccionado.getNombre())) {
+                DetalleOrden detalle = ordenActual.getDetalles().get(i);
+                int nuevaCantidad = detalle.getCantidad() + cantidad;
+                detalle.setCantidad(nuevaCantidad);
+
+                actualizandoTabla = true;
+                modelo.setValueAt(nuevaCantidad, i, 3);
+                modelo.setValueAt(String.format("$%.2f", detalle.getSubtotal()), i, 4);
+                actualizandoTabla = false;
+
+                txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
+                spnCantidad.setValue(1);
+                return;
+            }
+        }
+
+        // Si no existe, agregar nueva fila
+        DetalleOrden detalle = new DetalleOrden(0, itemSeleccionado, cantidad);
+        ordenActual.agregarDetalle(detalle);
+
+        actualizandoTabla = true;
         modelo.addRow(new Object[]{
             detalle.getIdLinea(),
             detalle.getNombre(),
@@ -411,11 +494,9 @@ public class frmOrden extends javax.swing.JFrame {
             detalle.getCantidad(),
             String.format("$%.2f", detalle.getSubtotal())
         });
+        actualizandoTabla = false;
 
-        // Actualizar total en pantalla
         txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
-
-        // Resetear spinner
         spnCantidad.setValue(1);
     }//GEN-LAST:event_btnAgregarActionPerformed
 
