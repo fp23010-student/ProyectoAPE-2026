@@ -319,8 +319,7 @@ public class frmProducto extends javax.swing.JFrame {
 
         btnCerrar.setBackground(new java.awt.Color(255, 102, 102));
         btnCerrar.setFont(new java.awt.Font("sansserif", 3, 18)); // NOI18N
-        btnCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x(2).png"))); // NOI18N
-        btnCerrar.setText("Cerrrar");
+        btnCerrar.setText("Menu");
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCerrarActionPerformed(evt);

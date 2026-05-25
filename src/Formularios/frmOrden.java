@@ -266,6 +266,7 @@ public class frmOrden extends javax.swing.JFrame {
         txtTotal = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         cmbMesa = new javax.swing.JComboBox<>();
+        btnMenu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ordenes");
@@ -321,6 +322,13 @@ public class frmOrden extends javax.swing.JFrame {
 
         jLabel8.setText("Mesa:");
 
+        btnMenu.setText("Menu");
+        btnMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenuActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -333,6 +341,8 @@ public class frmOrden extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMenu)
+                        .addGap(43, 43, 43)
                         .addComponent(btnProcesar)
                         .addGap(43, 43, 43)
                         .addComponent(jLabel7)
@@ -399,7 +409,8 @@ public class frmOrden extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnProcesar)
                             .addComponent(jLabel7)
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMenu))
                         .addGap(37, 37, 37))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(32, 32, 32)
@@ -500,6 +511,11 @@ public class frmOrden extends javax.swing.JFrame {
         spnCantidad.setValue(1);
     }//GEN-LAST:event_btnAgregarActionPerformed
 
+    private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
+        this.dispose();
+        new frmMenu().setVisible(true);
+    }//GEN-LAST:event_btnMenuActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -534,6 +550,7 @@ public class frmOrden extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnMenu;
     private javax.swing.JButton btnProcesar;
     private javax.swing.JComboBox<Object> cmbCategoria;
     private javax.swing.JComboBox<Mesa> cmbMesa;
