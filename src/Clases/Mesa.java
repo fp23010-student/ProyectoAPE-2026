@@ -51,7 +51,7 @@ public class Mesa {
 
     @Override
     public String toString() {
-        return "Mesa " + numero; // lo que muestra el JComboBox
+        return "Mesa " + numero; 
     }
 
 }

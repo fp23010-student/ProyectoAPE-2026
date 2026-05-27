@@ -32,7 +32,8 @@ public class frmOrden extends javax.swing.JFrame {
     private MesaDAO mesaDAO = new MesaDAO();
     private CategoriaDAO categoriaDAO = new CategoriaDAO();
     private Orden ordenActual = new Orden();
-    private boolean actualizandoTabla = false; // variable de instancia
+    private boolean actualizandoTabla = false;
+    private int idOrdenCargada = -1;
 
     public frmOrden() {
         initComponents();
@@ -220,31 +221,72 @@ public class frmOrden extends javax.swing.JFrame {
 
     private void limpiarFormulario() {
         ordenActual = new Orden();
+        idOrdenCargada = -1;
 
-        // Limpiar tabla
         ((DefaultTableModel) tblDetalle.getModel()).setRowCount(0);
-
-        // Resetear total
         txtTotal.setText("0.00");
-
-        // Nuevo ID próximo
         txtIDOrdeen.setText(String.valueOf(ordenDAO.obtenerProximoId()));
-
-        // Nueva fecha
         txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
                 .format(new java.util.Date()));
-
-        // Recargar mesas (la que se ocupó ya no aparece)
-        cargarMesas();
-
-        // Resetear spinner
+        cargarMesas(); // vuelve a mostrar solo las LIBRES
         spnCantidad.setValue(1);
+    }
+
+    public void cargarOrdenExistente(Orden orden) {
+        idOrdenCargada = orden.getIdOrden();
+        ordenActual = orden;
+
+        // Mostrar datos en campos
+        txtIDOrdeen.setText(String.valueOf(orden.getIdOrden()));
+        txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                .format(orden.getFechaHora()));
+
+        // Cargar la mesa de la orden en el combo (incluye ocupadas)
+        cargarTodasLasMesas();
+        seleccionarMesa(orden.getIdMesa());
+
+        // Cargar detalles en la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
+        modelo.setRowCount(0);
+        for (DetalleOrden d : orden.getDetalles()) {
+            actualizandoTabla = true;
+            modelo.addRow(new Object[]{
+                d.getIdLinea(),
+                d.getNombre(),
+                String.format("$%.2f", d.getPrecioUnitario()),
+                d.getCantidad(),
+                String.format("$%.2f", d.getSubtotal())
+            });
+            actualizandoTabla = false;
+        }
+        txtTotal.setText(String.format("%.2f", orden.getTotal()));
+    }
+
+// Carga todas las mesas incluyendo OCUPADAS (para ver la mesa de la orden cargada)
+    private void cargarTodasLasMesas() {
+        List<Mesa> mesas = mesaDAO.listarTodas();
+        DefaultComboBoxModel<Mesa> modelo = new DefaultComboBoxModel<>();
+        for (Mesa m : mesas) {
+            modelo.addElement(m);
+        }
+        cmbMesa.setModel(modelo);
+    }
+
+// Selecciona en el combo la mesa correspondiente a la orden
+    private void seleccionarMesa(int idMesa) {
+        for (int i = 0; i < cmbMesa.getItemCount(); i++) {
+            if (cmbMesa.getItemAt(i).getIdMesa() == idMesa) {
+                cmbMesa.setSelectedIndex(i);
+                break;
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel9 = new javax.swing.JLabel();
         lblLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -267,6 +309,12 @@ public class frmOrden extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         cmbMesa = new javax.swing.JComboBox<>();
         btnMenu = new javax.swing.JButton();
+        btnVerOrdenes = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnPagar = new javax.swing.JButton();
+
+        jLabel9.setText("Ordenes Pendientes:");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ordenes");
@@ -329,25 +377,41 @@ public class frmOrden extends javax.swing.JFrame {
             }
         });
 
+        btnVerOrdenes.setText("Ver odenes");
+        btnVerOrdenes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerOrdenesActionPerformed(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        btnPagar.setText("Pagar");
+        btnPagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPagarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMenu)
-                        .addGap(43, 43, 43)
-                        .addComponent(btnProcesar)
-                        .addGap(43, 43, 43)
-                        .addComponent(jLabel7)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -373,7 +437,27 @@ public class frmOrden extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
-                                .addComponent(btnAgregar)))))
+                                .addComponent(btnAgregar))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnVerOrdenes))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnPagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(65, 65, 65)
+                        .addComponent(btnProcesar)
+                        .addGap(31, 31, 31)
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMenu))))
                 .addGap(17, 17, 17))
         );
         layout.setVerticalGroup(
@@ -401,23 +485,28 @@ public class frmOrden extends javax.swing.JFrame {
                             .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnAgregar)))
                     .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(55, 55, 55)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnProcesar)
+                    .addComponent(btnVerOrdenes)
+                    .addComponent(btnActualizar))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnProcesar)
-                            .addComponent(jLabel7)
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnMenu))
-                        .addGap(37, 37, 37))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(btnEliminar)
+                            .addComponent(btnPagar))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                        .addComponent(btnMenu)
+                        .addGap(21, 21, 21))))
         );
 
         pack();
@@ -432,7 +521,6 @@ public class frmOrden extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Agregue al menos un producto a la orden.");
             return;
         }
-
         Mesa mesa = (Mesa) cmbMesa.getSelectedItem();
         if (mesa == null) {
             JOptionPane.showMessageDialog(this, "Seleccione una mesa.");
@@ -441,22 +529,20 @@ public class frmOrden extends javax.swing.JFrame {
 
         Usuario u = Sesion.getUsuarioActual();
         ordenActual.setIdUsuario(u.getIdUsuario());
-        ordenActual.setNombreUsuario(u.getNombre() + " " + u.getApellido());
+        ordenActual.setNombreUsuario(u.toString());
         ordenActual.setIdMesa(mesa.getIdMesa());
         ordenActual.setNumeroMesa(mesa.getNumero());
         ordenActual.setFechaHora(new java.util.Date());
+        ordenActual.setEstado("PENDIENTE");
 
-        int idOrden = ordenService.procesarOrden(ordenActual);
+        int idOrden = ordenService.registrarOrden(ordenActual);
 
         if (idOrden > 0) {
-            new TicketPDF().generarTicket(idOrden);
-            ordenService.liberarMesa(mesa.getIdMesa());
             JOptionPane.showMessageDialog(this,
-                    "Orden #" + idOrden + " procesada correctamente.\nTicket generado.");
+                    "Orden #" + idOrden + " registrada.\nMesa " + mesa.getNumero() + " ocupada.");
             limpiarFormulario();
         } else {
-            JOptionPane.showMessageDialog(this,
-                    "Error al procesar la orden. Intente de nuevo.",
+            JOptionPane.showMessageDialog(this, "Error al registrar la orden.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnProcesarActionPerformed
@@ -516,6 +602,75 @@ public class frmOrden extends javax.swing.JFrame {
         new frmMenu().setVisible(true);
     }//GEN-LAST:event_btnMenuActionPerformed
 
+    private void btnVerOrdenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerOrdenesActionPerformed
+        new frmOrdenesPendientes(this).setVisible(true);
+    }//GEN-LAST:event_btnVerOrdenesActionPerformed
+
+    private void btnPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarActionPerformed
+        if (idOrdenCargada < 0) {
+            JOptionPane.showMessageDialog(this, "Primero cargue una orden pendiente.");
+            return;
+        }
+        int confirmar = JOptionPane.showConfirmDialog(this,
+                "¿Confirmar pago de la Orden #" + idOrdenCargada + "?",
+                "Confirmar pago", JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+            boolean ok = ordenService.pagarOrden(idOrdenCargada);
+            if (ok) {
+                JOptionPane.showMessageDialog(this,
+                        "Orden #" + idOrdenCargada + " pagada. Ticket generado.");
+                limpiarFormulario();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al procesar el pago.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnPagarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (idOrdenCargada < 0) {
+            JOptionPane.showMessageDialog(this, "Primero cargue una orden pendiente.");
+            return;
+        }
+        int confirmar = JOptionPane.showConfirmDialog(this,
+                "¿Cancelar la Orden #" + idOrdenCargada + "? Esta acción no se puede deshacer.",
+                "Confirmar cancelación", JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+            boolean ok = ordenService.cancelarOrden(idOrdenCargada);
+            if (ok) {
+                JOptionPane.showMessageDialog(this,
+                        "Orden #" + idOrdenCargada + " cancelada. Mesa liberada.");
+                limpiarFormulario();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al cancelar la orden.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        if (idOrdenCargada < 0) {
+            JOptionPane.showMessageDialog(this, "Primero cargue una orden pendiente.");
+            return;
+        }
+        if (!ordenActual.tieneDetalles()) {
+            JOptionPane.showMessageDialog(this, "La orden no tiene productos.");
+            return;
+        }
+
+        boolean ok = ordenService.actualizarOrden(idOrdenCargada, ordenActual);
+        if (ok) {
+            JOptionPane.showMessageDialog(this,
+                    "Orden #" + idOrdenCargada + " actualizada correctamente.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar la orden.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -549,9 +704,13 @@ public class frmOrden extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnMenu;
+    private javax.swing.JButton btnPagar;
     private javax.swing.JButton btnProcesar;
+    private javax.swing.JButton btnVerOrdenes;
     private javax.swing.JComboBox<Object> cmbCategoria;
     private javax.swing.JComboBox<Mesa> cmbMesa;
     private javax.swing.JComboBox<Item> cmbProudcto_Combo;
@@ -563,6 +722,7 @@ public class frmOrden extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JSpinner spnCantidad;

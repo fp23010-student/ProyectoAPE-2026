@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Orden {
 
+    private double totalGuardado;
     private int idOrden;
     private Date fechaHora;
     private int idUsuario;
@@ -12,6 +13,7 @@ public class Orden {
     private int idMesa;
     private int numeroMesa;
     private ArrayList<DetalleOrden> detalles;
+    private String estado;
 
     public Orden() {
         this.detalles = new ArrayList<>();
@@ -97,4 +99,27 @@ public class Orden {
     public void setDetalles(ArrayList<DetalleOrden> detalles) {
         this.detalles = detalles;
     }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+// setTotal temporal para cuando cargamos desde BD
+    public void setTotal(double total) {
+        this.total = total;
+    }
+    private double total; // campo para totales cargados desde BD
+
+    public double getTotalGuardado() {
+        return totalGuardado;
+    }
+
+    public void setTotalGuardado(double total) {
+        this.totalGuardado = total;
+    }
+
 }
