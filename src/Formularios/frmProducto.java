@@ -155,7 +155,7 @@ public class frmProducto extends javax.swing.JFrame {
         tblMostrarProductos = new javax.swing.JTable();
         btnCerrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Productos");
         setBackground(new java.awt.Color(255, 0, 51));
         setFont(new java.awt.Font("Arundina Sans", 2, 10)); // NOI18N

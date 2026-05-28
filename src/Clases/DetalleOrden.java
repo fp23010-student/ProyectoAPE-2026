@@ -4,9 +4,9 @@ public class DetalleOrden {
 
     private int idOrden;
     private int idLinea;
-    private Integer idProducto;  // null si es combo
-    private Integer idCombo;     // null si es producto
-    private String nombre;       // para mostrar en tabla y ticket
+    private Integer idProducto; 
+    private Integer idCombo;    
+    private String nombre;     
     private int cantidad;
     private double precioUnitario;
 

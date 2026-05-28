@@ -6,7 +6,6 @@ import java.util.List;
 
 public class MesaDAO {
     // Trae solo las mesas LIBRES para el combo al abrir la orden
-
     public ArrayList<Mesa> listarMesasLibres() {
         ArrayList<Mesa> lista = new ArrayList<>();
         try (Connection cn = Conexion.conectar()) {

@@ -42,7 +42,7 @@ public class DetalleOrdenDAO {
         return true;
     }
 
-    // Para consultas futuras (historial, ticket de reimpresión)
+
     public ArrayList<DetalleOrden> listarPorOrden(int idOrden) {
         ArrayList<DetalleOrden> lista = new ArrayList<>();
         try (Connection cn = Conexion.conectar()) {

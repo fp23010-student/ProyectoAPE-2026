@@ -31,7 +31,7 @@ public class Orden {
         }
     }
 
-    // Un solo getTotal() que siempre calcula en tiempo real
+    
     public double getTotal() {
         double suma = 0;
         for (DetalleOrden d : detalles) {
@@ -108,11 +108,10 @@ public class Orden {
         this.estado = estado;
     }
 
-// setTotal temporal para cuando cargamos desde BD
     public void setTotal(double total) {
         this.total = total;
     }
-    private double total; // campo para totales cargados desde BD
+    private double total; 
 
     public double getTotalGuardado() {
         return totalGuardado;

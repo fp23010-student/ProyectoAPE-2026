@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
 public class frmOrdenesPendientes extends javax.swing.JFrame {
 
     private OrdenDAO ordenDAO = new OrdenDAO();
-    private frmOrden formularioOrigen; // referencia al frmOrden que la abrió
+    private frmOrden formularioOrigen; 
    
 
     public frmOrdenesPendientes() {
@@ -27,7 +27,7 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
     public frmOrdenesPendientes(frmOrden origen) {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.formularioOrigen = origen; // ← aquí se asigna
+        this.formularioOrigen = origen; 
         configurarTabla();
         cargarOrdenesPendientes();
         configurarDobleClick();
@@ -96,17 +96,17 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
 
         int idOrden = (int) jTable1.getValueAt(fila, 0);
 
-        // Obtener la orden completa con sus detalles
+        
         Orden orden = ordenDAO.obtenerPorId(idOrden);
         if (orden == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar la orden.");
             return;
         }
 
-        // Cargarla en frmOrden
+     
         if (formularioOrigen != null) {
             formularioOrigen.cargarOrdenExistente(orden);
-            this.dispose(); // cerrar este formulario
+            this.dispose(); 
         }
     }
 

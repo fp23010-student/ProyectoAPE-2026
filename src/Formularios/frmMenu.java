@@ -1,5 +1,7 @@
 package Formularios;
 
+import Clases.Sesion;
+import Clases.Usuario;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
@@ -15,6 +17,43 @@ public class frmMenu extends javax.swing.JFrame {
                 Image.SCALE_SMOOTH
         );
         lblLogo.setIcon(new ImageIcon(scaledImage));
+        aplicarPermisos();
+    }
+
+    private void aplicarPermisos() {
+        Usuario u = Sesion.getUsuarioActual();
+        String rol = u.getRol();
+
+        switch (rol) {
+            case "ADMINISTRADOR":
+            case "SUPERVISOR":
+                
+                btnProductos.setEnabled(true);
+                btnCombos.setEnabled(true);
+                btnOrdenes.setEnabled(true);
+                break;
+
+            case "MESERO":
+                
+                btnProductos.setEnabled(false);
+                btnCombos.setEnabled(false);
+                btnOrdenes.setEnabled(true);
+                break;
+
+            case "COCINERO":
+                
+                btnProductos.setEnabled(false);
+                btnCombos.setEnabled(false);
+                btnOrdenes.setEnabled(false);
+                break;
+
+            default:
+                
+                btnProductos.setEnabled(false);
+                btnCombos.setEnabled(false);
+                btnOrdenes.setEnabled(false);
+                break;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -27,9 +66,10 @@ public class frmMenu extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         lblLogo = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Menu");
 
+        btnProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/prodcutos.png"))); // NOI18N
         btnProductos.setText("Productos");
         btnProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -37,6 +77,7 @@ public class frmMenu extends javax.swing.JFrame {
             }
         });
 
+        btnCombos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/comboss.png"))); // NOI18N
         btnCombos.setText("Combos");
         btnCombos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -44,6 +85,7 @@ public class frmMenu extends javax.swing.JFrame {
             }
         });
 
+        btnOrdenes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/orden.png"))); // NOI18N
         btnOrdenes.setText("Ordenes");
         btnOrdenes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -51,6 +93,7 @@ public class frmMenu extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cerrarsesion.png"))); // NOI18N
         jButton4.setText("Cerrar Sesion");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -65,35 +108,35 @@ public class frmMenu extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btnOrdenes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnOrdenes, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCombos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(76, 76, 76))
+                    .addComponent(btnCombos, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
+                        .addGap(40, 40, 40)
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnProductos)
-                            .addComponent(btnCombos))
-                        .addGap(46, 46, 46)
+                        .addGap(52, 52, 52)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnCombos)
+                            .addComponent(btnProductos))
+                        .addGap(61, 61, 61)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnOrdenes)
                             .addComponent(jButton4))))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         pack();

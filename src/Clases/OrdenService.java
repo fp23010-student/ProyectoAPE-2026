@@ -17,16 +17,16 @@ public class OrdenService {
         try (Connection cn = Conexion.conectar()) {
             cn.setAutoCommit(false);
 
-            // 1. Insertar cabecera
+            
             int idOrden = ordenDAO.insertar(orden, cn);
             orden.setIdOrden(idOrden);
 
-            // Asignar idOrden a cada detalle
+            
             for (DetalleOrden d : orden.getDetalles()) {
                 d.setIdOrden(idOrden);
             }
 
-            // 2. Insertar detalles en lote
+            
             boolean detallesOk = detalleDAO.insertarLote(idOrden, orden.getDetalles(), cn);
             if (!detallesOk) {
                 cn.rollback();
@@ -35,7 +35,7 @@ public class OrdenService {
 
             cn.commit();
 
-            // 3. Marcar mesa como OCUPADA (fuera de la transacción, es un UPDATE simple)
+      
             mesaDAO.actualizarEstado(orden.getIdMesa(), "OCUPADA");
 
             return idOrden;
@@ -46,14 +46,12 @@ public class OrdenService {
         }
     }
 
-    /**
-     * Libera la mesa al cerrar/entregar el ticket.
-     */
+
     public void liberarMesa(int idMesa) {
         mesaDAO.actualizarEstado(idMesa, "LIBRE");
     }
 
-    // Solo guarda la orden como PENDIENTE, sin ticket ni liberar mesa
+    
     public int registrarOrden(Orden orden) {
         if (!orden.tieneDetalles()) {
             throw new IllegalArgumentException("La orden no tiene productos.");
@@ -72,7 +70,7 @@ public class OrdenService {
 
             cn.commit();
 
-            // Marcar mesa como OCUPADA
+          
             mesaDAO.actualizarEstado(orden.getIdMesa(), "OCUPADA");
 
             return idOrden;
@@ -83,7 +81,7 @@ public class OrdenService {
         }
     }
 
-// Pagar: marca como PAGADA, libera mesa, genera ticket
+
     public boolean pagarOrden(int idOrden) {
         int idMesa = ordenDAO.obtenerIdMesa(idOrden);
         boolean ok = ordenDAO.actualizarEstado(idOrden, "PAGADA");
@@ -94,7 +92,7 @@ public class OrdenService {
         return ok;
     }
 
-// Cancelar: marca como CANCELADA, libera mesa, sin ticket
+
     public boolean cancelarOrden(int idOrden) {
         int idMesa = ordenDAO.obtenerIdMesa(idOrden);
         boolean ok = ordenDAO.actualizarEstado(idOrden, "CANCELADA");
@@ -108,20 +106,20 @@ public class OrdenService {
         try (Connection cn = Conexion.getConnection()) {
             cn.setAutoCommit(false);
 
-            // 1. Eliminar los detalles anteriores
+         
             String sqlDelete = "DELETE FROM detalleorden WHERE idOrden = ?";
             PreparedStatement psDel = cn.prepareStatement(sqlDelete);
             psDel.setInt(1, idOrden);
             psDel.executeUpdate();
 
-            // 2. Insertar los detalles nuevos
+          
             boolean ok = detalleDAO.insertarLote(idOrden, orden.getDetalles(), cn);
             if (!ok) {
                 cn.rollback();
                 return false;
             }
 
-            // 3. Actualizar el total en la cabecera
+         
             String sqlTotal = "UPDATE orden SET total = ? WHERE idOrden = ?";
             PreparedStatement psTotal = cn.prepareStatement(sqlTotal);
             psTotal.setDouble(1, orden.getTotal());

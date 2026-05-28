@@ -60,7 +60,7 @@ public class frmBuscarCombo extends javax.swing.JFrame {
         btnCerrar = new javax.swing.JButton();
         pnlFondo = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Combos");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 

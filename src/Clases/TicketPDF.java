@@ -49,7 +49,6 @@ public class TicketPDF {
             PreparedStatement psOrden = con.prepareStatement(sqlOrden);
             PreparedStatement psDet   = con.prepareStatement(sqlDetalle);
         ) {
-            // ── DATOS DE CABECERA ────────────────────────────────
             psOrden.setInt(1, idOrden);
             ResultSet rsOrden = psOrden.executeQuery();
 
@@ -70,7 +69,7 @@ public class TicketPDF {
                 }
             }
 
-            // ── CARPETA documentos/dd-MM-yyyy/ ───────────────────
+
             String fechaCarpeta = LocalDate.now()
                     .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
@@ -105,7 +104,7 @@ public class TicketPDF {
             linea(doc, "MESA:   " + numeroMesa,   normal, Element.ALIGN_LEFT);
             linea(doc, separador(),               normal, Element.ALIGN_LEFT);
 
-            // ── DETALLE ──────────────────────────────────────────
+           
             psDet.setInt(1, idOrden);
             ResultSet rsDet = psDet.executeQuery();
 
@@ -127,7 +126,7 @@ public class TicketPDF {
 
             linea(doc, separador(), normal, Element.ALIGN_LEFT);
 
-            // ── TOTAL ────────────────────────────────────────────
+            
             Paragraph pTotal = new Paragraph(
                     "TOTAL: $" + String.format("%.2f", totalCalculado), titulo);
             pTotal.setAlignment(Element.ALIGN_RIGHT);
