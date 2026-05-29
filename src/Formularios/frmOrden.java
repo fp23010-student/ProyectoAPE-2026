@@ -47,25 +47,25 @@ public class frmOrden extends javax.swing.JFrame {
         configurarTabla();
         cargarDatosIniciales();
         configurarEventoCmbCategoria();
+
     }
 
     private void configurarTabla() {
         DefaultTableModel modelo = new DefaultTableModel(
-                new String[]{"#", "Descripción", "Precio Unit.", "Cantidad", "Subtotal"}, 0) {
+                new String[]{"ID", "Descripción", "Precio Unit.", "Cantidad", "Subtotal"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3; 
+                return column == 3;
             }
         };
         tblDetalle.setModel(modelo);
         tblDetalle.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(10);
         tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(160);
         tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(70);
         tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(50);
         tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(70);
 
-       
         tblDetalle.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
@@ -81,10 +81,9 @@ public class frmOrden extends javax.swing.JFrame {
             }
         });
 
-        
         modelo.addTableModelListener(e -> {
             if (actualizandoTabla) {
-                return; 
+                return;
             }
             if (e.getColumn() == 3 && e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
                 int fila = e.getFirstRow();
@@ -160,7 +159,7 @@ public class frmOrden extends javax.swing.JFrame {
                 }
 
                 if (seleccion instanceof String) {
-                    
+
                     cargarCombos();
                 } else {
                     Categoria cat = (Categoria) seleccion;
@@ -184,17 +183,17 @@ public class frmOrden extends javax.swing.JFrame {
         modelo.addElement("Combos");
 
         CategoriaDAO categoriaDAO = new CategoriaDAO();
-        List<Categoria> cats = categoriaDAO.listar(); 
+        List<Categoria> cats = categoriaDAO.listar();
         for (Categoria c : cats) {
             modelo.addElement(c);
         }
         cmbCategoria.setModel(modelo);
-        cargarCombos(); 
+        cargarCombos();
     }
 
     private void cargarCombos() {
         ComboDAO comboDAO = new ComboDAO();
-        List<Combo> combos = comboDAO.listarCombos(""); 
+        List<Combo> combos = comboDAO.listarCombos("");
 
         DefaultComboBoxModel<Item> modelo = new DefaultComboBoxModel<>();
         for (Combo c : combos) {
@@ -228,7 +227,7 @@ public class frmOrden extends javax.swing.JFrame {
         txtIDOrdeen.setText(String.valueOf(ordenDAO.obtenerProximoId()));
         txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
                 .format(new java.util.Date()));
-        cargarMesas(); 
+        cargarMesas();
         spnCantidad.setValue(1);
     }
 
@@ -236,16 +235,13 @@ public class frmOrden extends javax.swing.JFrame {
         idOrdenCargada = orden.getIdOrden();
         ordenActual = orden;
 
-       
         txtIDOrdeen.setText(String.valueOf(orden.getIdOrden()));
         txtFechaHora.setText(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
                 .format(orden.getFechaHora()));
 
-       
         cargarTodasLasMesas();
         seleccionarMesa(orden.getIdMesa());
 
-        
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
         modelo.setRowCount(0);
         for (DetalleOrden d : orden.getDetalles()) {
@@ -262,7 +258,6 @@ public class frmOrden extends javax.swing.JFrame {
         txtTotal.setText(String.format("%.2f", orden.getTotal()));
     }
 
-
     private void cargarTodasLasMesas() {
         List<Mesa> mesas = mesaDAO.listarTodas();
         DefaultComboBoxModel<Mesa> modelo = new DefaultComboBoxModel<>();
@@ -271,7 +266,6 @@ public class frmOrden extends javax.swing.JFrame {
         }
         cmbMesa.setModel(modelo);
     }
-
 
     private void seleccionarMesa(int idMesa) {
         for (int i = 0; i < cmbMesa.getItemCount(); i++) {
@@ -313,40 +307,57 @@ public class frmOrden extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
         btnPagar = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
 
         jLabel9.setText("Ordenes Pendientes:");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ordenes");
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblLogo.setText("jLabel1");
+        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 15, 160, 140));
 
         jLabel1.setText("ID de Orden:");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 18, -1, -1));
 
         jLabel2.setText("Fecha y Hora:");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 66, -1, -1));
 
         jLabel3.setText("Usuario:");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 119, -1, -1));
 
         txtIDOrdeen.setEditable(false);
         txtIDOrdeen.setEnabled(false);
+        getContentPane().add(txtIDOrdeen, new org.netbeans.lib.awtextra.AbsoluteConstraints(302, 15, 75, -1));
 
         txtFechaHora.setEditable(false);
         txtFechaHora.setEnabled(false);
+        getContentPane().add(txtFechaHora, new org.netbeans.lib.awtextra.AbsoluteConstraints(302, 63, 247, -1));
 
         txtUsuario.setEditable(false);
         txtUsuario.setEnabled(false);
+        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(302, 116, 247, -1));
 
         jLabel4.setText("Categoria:");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 20, -1, -1));
 
         cmbCategoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbCategoriaActionPerformed(evt);
             }
         });
+        getContentPane().add(cmbCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(771, 15, 310, -1));
 
         jLabel5.setText("Producto/Combo:");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 70, -1, -1));
 
         jLabel6.setText("Cantidad:");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 123, -1, -1));
+
+        getContentPane().add(cmbProudcto_Combo, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 70, 311, -1));
+        getContentPane().add(spnCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 120, -1, -1));
 
         btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/agregar.png"))); // NOI18N
         btnAgregar.setText("Agregar");
@@ -355,19 +366,22 @@ public class frmOrden extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
+        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(946, 119, 135, -1));
 
         tblDetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         jScrollPane1.setViewportView(tblDetalle);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 175, 1060, 310));
 
         btnProcesar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/procesar.png"))); // NOI18N
         btnProcesar.setText("Procesar");
@@ -376,16 +390,22 @@ public class frmOrden extends javax.swing.JFrame {
                 btnProcesarActionPerformed(evt);
             }
         });
+        getContentPane().add(btnProcesar, new org.netbeans.lib.awtextra.AbsoluteConstraints(799, 516, -1, -1));
 
         jLabel7.setText("Total $:");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(931, 520, -1, -1));
 
         txtTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalActionPerformed(evt);
             }
         });
+        getContentPane().add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(991, 520, 90, -1));
 
         jLabel8.setText("Mesa:");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 519, 70, 20));
+
+        getContentPane().add(cmbMesa, new org.netbeans.lib.awtextra.AbsoluteConstraints(77, 512, 100, 30));
 
         btnMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/menu.png"))); // NOI18N
         btnMenu.setText("Menu");
@@ -394,6 +414,7 @@ public class frmOrden extends javax.swing.JFrame {
                 btnMenuActionPerformed(evt);
             }
         });
+        getContentPane().add(btnMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(991, 557, 90, -1));
 
         btnVerOrdenes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ver.png"))); // NOI18N
         btnVerOrdenes.setText("Ver odenes");
@@ -402,14 +423,16 @@ public class frmOrden extends javax.swing.JFrame {
                 btnVerOrdenesActionPerformed(evt);
             }
         });
+        getContentPane().add(btnVerOrdenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(451, 516, 144, -1));
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/eliminarr.png"))); // NOI18N
-        btnEliminar.setText("Eliminar");
+        btnEliminar.setText("Eliminar orden");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
             }
         });
+        getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(451, 557, 147, -1));
 
         btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/actualizar.png"))); // NOI18N
         btnActualizar.setText("Actualizar");
@@ -418,6 +441,7 @@ public class frmOrden extends javax.swing.JFrame {
                 btnActualizarActionPerformed(evt);
             }
         });
+        getContentPane().add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(616, 516, 128, -1));
 
         btnPagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pagar.png"))); // NOI18N
         btnPagar.setText("Pagar");
@@ -426,133 +450,22 @@ public class frmOrden extends javax.swing.JFrame {
                 btnPagarActionPerformed(evt);
             }
         });
+        getContentPane().add(btnPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 557, 122, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtIDOrdeen, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtFechaHora, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(81, 81, 81)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
-                                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(cmbProudcto_Combo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(cmbCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1050, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(55, 55, 55)
-                                .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(283, 283, 283)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(15, 15, 15)
-                                .addComponent(btnPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnVerOrdenes, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(15, 15, 15)
-                                .addComponent(btnActualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(247, 247, 247)
-                                .addComponent(btnMenu))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(55, 55, 55)
-                                .addComponent(btnProcesar)
-                                .addGap(23, 23, 23)
-                                .addComponent(jLabel7)
-                                .addGap(15, 15, 15)
-                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(35, 35, 35))
+        jPanel1.setBackground(new java.awt.Color(255, 255, 102));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1120, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel1)
-                        .addGap(29, 29, 29)
-                        .addComponent(jLabel2)
-                        .addGap(34, 34, 34)
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtIDOrdeen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23)
-                        .addComponent(txtFechaHora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(jLabel4)
-                        .addGap(31, 31, 31)
-                        .addComponent(jLabel5))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cmbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(cmbProudcto_Combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6)
-                            .addComponent(btnAgregar))))
-                .addGap(28, 28, 28)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmbMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(7, 7, 7)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(jLabel7))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnVerOrdenes)
-                            .addComponent(btnActualizar)
-                            .addComponent(btnProcesar))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnEliminar)
-                    .addComponent(btnPagar)
-                    .addComponent(btnMenu))
-                .addGap(7, 7, 7))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 620, Short.MAX_VALUE)
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1120, 620));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -605,7 +518,6 @@ public class frmOrden extends javax.swing.JFrame {
         }
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
 
-    
         for (int i = 0; i < modelo.getRowCount(); i++) {
             String nombreFila = modelo.getValueAt(i, 1).toString();
             if (nombreFila.equals(itemSeleccionado.getNombre())) {
@@ -624,7 +536,6 @@ public class frmOrden extends javax.swing.JFrame {
             }
         }
 
-  
         DetalleOrden detalle = new DetalleOrden(0, itemSeleccionado, cantidad);
         ordenActual.agregarDetalle(detalle);
 
@@ -772,6 +683,7 @@ public class frmOrden extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JSpinner spnCantidad;
