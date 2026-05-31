@@ -59,12 +59,13 @@ public class frmOrden extends javax.swing.JFrame {
             }
         };
         tblDetalle.setModel(modelo);
+        tblDetalle.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         tblDetalle.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(10);
-        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(160);
-        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(50);
-        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(70);
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(60);
+        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(729);
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(90);
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(76);
 
         tblDetalle.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -105,10 +106,10 @@ public class frmOrden extends javax.swing.JFrame {
                         });
                     } else {
                         detalle.setCantidad(nuevaCantidad);
-                        actualizandoTabla = true; // bloquear antes de setValueAt
+                        actualizandoTabla = true;
                         tblDetalle.getModel().setValueAt(
                                 String.format("$%.2f", detalle.getSubtotal()), fila, 4);
-                        actualizandoTabla = false; // desbloquear
+                        actualizandoTabla = false;
                         txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
                     }
 
@@ -293,7 +294,6 @@ public class frmOrden extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         cmbProudcto_Combo = new javax.swing.JComboBox<>();
-        spnCantidad = new javax.swing.JSpinner();
         btnAgregar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDetalle = new javax.swing.JTable();
@@ -307,7 +307,9 @@ public class frmOrden extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
         btnPagar = new javax.swing.JButton();
+        btnNuevaOrden = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
+        spnCantidad = new javax.swing.JSpinner();
 
         jLabel9.setText("Ordenes Pendientes:");
 
@@ -357,7 +359,6 @@ public class frmOrden extends javax.swing.JFrame {
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 123, -1, -1));
 
         getContentPane().add(cmbProudcto_Combo, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 70, 311, -1));
-        getContentPane().add(spnCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 120, -1, -1));
 
         btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/agregar.png"))); // NOI18N
         btnAgregar.setText("Agregar");
@@ -414,7 +415,7 @@ public class frmOrden extends javax.swing.JFrame {
                 btnMenuActionPerformed(evt);
             }
         });
-        getContentPane().add(btnMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(991, 557, 90, -1));
+        getContentPane().add(btnMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(971, 557, 110, -1));
 
         btnVerOrdenes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ver.png"))); // NOI18N
         btnVerOrdenes.setText("Ver odenes");
@@ -452,20 +453,35 @@ public class frmOrden extends javax.swing.JFrame {
         });
         getContentPane().add(btnPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 557, 122, -1));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 102));
+        btnNuevaOrden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevaOrden.png"))); // NOI18N
+        btnNuevaOrden.setText("Nueva orden");
+        btnNuevaOrden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevaOrdenActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnNuevaOrden, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 516, -1, 30));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1120, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(768, Short.MAX_VALUE)
+                .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(262, 262, 262))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(467, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1120, 620));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 610));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -621,6 +637,7 @@ public class frmOrden extends javax.swing.JFrame {
         if (ok) {
             JOptionPane.showMessageDialog(this,
                     "Orden #" + idOrdenCargada + " actualizada correctamente.");
+            limpiarFormulario();
         } else {
             JOptionPane.showMessageDialog(this, "Error al actualizar la orden.",
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -630,6 +647,16 @@ public class frmOrden extends javax.swing.JFrame {
     private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalActionPerformed
+
+    private void btnNuevaOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaOrdenActionPerformed
+        int confirmar = JOptionPane.showConfirmDialog(this,
+                "¿Descartar cambios y comenzar una nueva orden?",
+                "Nueva orden", JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+            limpiarFormulario();
+        }
+    }//GEN-LAST:event_btnNuevaOrdenActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -668,6 +695,7 @@ public class frmOrden extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnMenu;
+    private javax.swing.JButton btnNuevaOrden;
     private javax.swing.JButton btnPagar;
     private javax.swing.JButton btnProcesar;
     private javax.swing.JButton btnVerOrdenes;

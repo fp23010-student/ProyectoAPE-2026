@@ -65,9 +65,11 @@ public class frmMenu extends javax.swing.JFrame {
         btnOrdenes = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         lblLogo = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Menu");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/prodcutos.png"))); // NOI18N
         btnProductos.setText("Productos");
@@ -76,6 +78,7 @@ public class frmMenu extends javax.swing.JFrame {
                 btnProductosActionPerformed(evt);
             }
         });
+        getContentPane().add(btnProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(267, 52, -1, -1));
 
         btnCombos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/comboss.png"))); // NOI18N
         btnCombos.setText("Combos");
@@ -84,6 +87,7 @@ public class frmMenu extends javax.swing.JFrame {
                 btnCombosActionPerformed(evt);
             }
         });
+        getContentPane().add(btnCombos, new org.netbeans.lib.awtextra.AbsoluteConstraints(453, 52, 168, -1));
 
         btnOrdenes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/orden.png"))); // NOI18N
         btnOrdenes.setText("Ordenes");
@@ -92,6 +96,7 @@ public class frmMenu extends javax.swing.JFrame {
                 btnOrdenesActionPerformed(evt);
             }
         });
+        getContentPane().add(btnOrdenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(267, 169, 147, -1));
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cerrarsesion.png"))); // NOI18N
         jButton4.setText("Cerrar Sesion");
@@ -100,44 +105,25 @@ public class frmMenu extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(453, 169, -1, -1));
 
         lblLogo.setText("jLabel1");
+        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(21, 40, 206, 193));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
-                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnOrdenes, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCombos, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(54, 54, 54))
+        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 680, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnCombos)
-                            .addComponent(btnProductos))
-                        .addGap(61, 61, 61)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnOrdenes)
-                            .addComponent(jButton4))))
-                .addContainerGap(45, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 280, Short.MAX_VALUE)
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 680, 280));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -202,6 +188,7 @@ public class frmMenu extends javax.swing.JFrame {
     private javax.swing.JButton btnOrdenes;
     private javax.swing.JButton btnProductos;
     private javax.swing.JButton jButton4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblLogo;
     // End of variables declaration//GEN-END:variables
 }
