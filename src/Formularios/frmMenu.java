@@ -26,32 +26,32 @@ public class frmMenu extends javax.swing.JFrame {
 
         switch (rol) {
             case "ADMINISTRADOR":
-            case "SUPERVISOR":
-                
                 btnProductos.setEnabled(true);
                 btnCombos.setEnabled(true);
                 btnOrdenes.setEnabled(true);
+                btnAgregarUsuario.setVisible(true);  
+                break;
+
+            case "SUPERVISOR":
+                btnProductos.setEnabled(true);
+                btnCombos.setEnabled(true);
+                btnOrdenes.setEnabled(true);
+                btnAgregarUsuario.setVisible(false); 
                 break;
 
             case "MESERO":
-                
                 btnProductos.setEnabled(false);
                 btnCombos.setEnabled(false);
                 btnOrdenes.setEnabled(true);
+                btnAgregarUsuario.setVisible(false);
                 break;
 
             case "COCINERO":
-                
-                btnProductos.setEnabled(false);
-                btnCombos.setEnabled(false);
-                btnOrdenes.setEnabled(false);
-                break;
-
             default:
-                
                 btnProductos.setEnabled(false);
                 btnCombos.setEnabled(false);
                 btnOrdenes.setEnabled(false);
+                btnAgregarUsuario.setVisible(false);
                 break;
         }
     }
@@ -60,12 +60,41 @@ public class frmMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         btnProductos = new javax.swing.JButton();
         btnCombos = new javax.swing.JButton();
         btnOrdenes = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         lblLogo = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        btnAgregarUsuario = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 680, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 280, Short.MAX_VALUE)
+        );
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 102));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 650, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 330, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Menu");
@@ -110,20 +139,29 @@ public class frmMenu extends javax.swing.JFrame {
         lblLogo.setText("jLabel1");
         getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(21, 40, 206, 193));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
+        btnAgregarUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/agregar-usuario.png"))); // NOI18N
+        btnAgregarUsuario.setText("Agregar Usuario");
+        btnAgregarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarUsuarioActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnAgregarUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 260, 170, 50));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 680, Short.MAX_VALUE)
+        jPanel3.setBackground(new java.awt.Color(255, 255, 102));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 650, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 280, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 340, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 680, 280));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 650, 340));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -147,6 +185,11 @@ public class frmMenu extends javax.swing.JFrame {
         new frmCombo().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCombosActionPerformed
+
+    private void btnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarUsuarioActionPerformed
+        new frmAgregarUsuario().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnAgregarUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,11 +227,14 @@ public class frmMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregarUsuario;
     private javax.swing.JButton btnCombos;
     private javax.swing.JButton btnOrdenes;
     private javax.swing.JButton btnProductos;
     private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel lblLogo;
     // End of variables declaration//GEN-END:variables
 }
