@@ -11,8 +11,7 @@ import javax.swing.table.DefaultTableModel;
 public class frmOrdenesPendientes extends javax.swing.JFrame {
 
     private OrdenDAO ordenDAO = new OrdenDAO();
-    private frmOrden formularioOrigen; 
-   
+    private frmOrden formularioOrigen;
 
     public frmOrdenesPendientes() {
         initComponents();
@@ -23,11 +22,10 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
         configurarDobleClick();
     }
 
-
     public frmOrdenesPendientes(frmOrden origen) {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.formularioOrigen = origen; 
+        this.formularioOrigen = origen;
         configurarTabla();
         cargarOrdenesPendientes();
         configurarDobleClick();
@@ -56,15 +54,14 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
 
-        ArrayList<Orden> pendientes = ordenDAO.listarPendientes();
+        ArrayList<Orden> ordenes = ordenDAO.listarProcesadas(); 
 
-        if (pendientes.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "No hay órdenes pendientes.");
+        if (ordenes.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay órdenes procesadas pendientes de despacho.");
             return;
         }
 
-        for (Orden o : pendientes) {
+        for (Orden o : ordenes) {
             String fecha = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm")
                     .format(o.getFechaHora());
             modelo.addRow(new Object[]{
@@ -96,17 +93,15 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
 
         int idOrden = (int) jTable1.getValueAt(fila, 0);
 
-        
         Orden orden = ordenDAO.obtenerPorId(idOrden);
         if (orden == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar la orden.");
             return;
         }
 
-     
         if (formularioOrigen != null) {
             formularioOrigen.cargarOrdenExistente(orden);
-            this.dispose(); 
+            this.dispose();
         }
     }
 
@@ -176,28 +171,28 @@ public class frmOrdenesPendientes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-           if (evt.getClickCount() == 2) {
-        int fila = jTable1.getSelectedRow();
-        if (fila < 0) return;
+        if (evt.getClickCount() == 2) {
+            int fila = jTable1.getSelectedRow();
+            if (fila < 0) {
+                return;
+            }
 
-        int idOrden = (int) jTable1.getValueAt(fila, 0);
-        Orden orden = ordenDAO.obtenerPorId(idOrden);
+            int idOrden = (int) jTable1.getValueAt(fila, 0);
+            Orden orden = ordenDAO.obtenerPorId(idOrden);
 
-        if (orden == null) {
-            JOptionPane.showMessageDialog(this, "Error al cargar la orden.");
-            return;
+            if (orden == null) {
+                JOptionPane.showMessageDialog(this, "Error al cargar la orden.");
+                return;
+            }
+
+            if (formularioOrigen != null) {
+                formularioOrigen.cargarOrdenExistente(orden);
+                this.dispose();
+            }
         }
-
-        if (formularioOrigen != null) {
-            formularioOrigen.cargarOrdenExistente(orden);
-            this.dispose();
-        }
-    }
     }//GEN-LAST:event_jTable1MouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

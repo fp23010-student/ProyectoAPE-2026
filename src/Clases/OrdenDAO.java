@@ -11,7 +11,7 @@ public class OrdenDAO {
         ps.setInt(1, orden.getIdUsuario());
         ps.setInt(2, orden.getIdMesa());
         ps.setDouble(3, orden.getTotal());
-        ps.setString(4, "PENDIENTE");
+        ps.setString(4, orden.getEstado());
         ps.executeUpdate();
 
         ResultSet keys = ps.getGeneratedKeys();
@@ -67,16 +67,18 @@ public class OrdenDAO {
         return orden;
     }
 
-    public ArrayList<Orden> listarPendientes() {
+    public ArrayList<Orden> listarProcesadas() {
         ArrayList<Orden> lista = new ArrayList<>();
         try (Connection cn = Conexion.conectar()) {
-            String sql = "SELECT o.idOrden, o.fechaHora, o.total, o.estado, "
-                    + "o.idMesa, u.nombre, u.apellido, m.numero AS numeroMesa "
-                    + "FROM orden o "
-                    + "JOIN usuario u ON o.idUsuario = u.idUsuario "
-                    + "JOIN mesa m    ON o.idMesa    = m.idMesa "
-                    + "WHERE o.estado = 'PENDIENTE' "
-                    + "ORDER BY o.fechaHora ASC";
+            String sql = """
+            SELECT o.idOrden, o.fechaHora, o.total, o.estado,
+                   o.idMesa, u.nombre, u.apellido, m.numero AS numeroMesa
+            FROM orden o
+            JOIN usuario u ON o.idUsuario = u.idUsuario
+            JOIN mesa m    ON o.idMesa    = m.idMesa
+            WHERE o.estado = 'PROCESADA'
+            ORDER BY o.fechaHora ASC
+        """;
             PreparedStatement ps = cn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -91,7 +93,7 @@ public class OrdenDAO {
                 lista.add(o);
             }
         } catch (Exception e) {
-            System.out.println("Error listarPendientes: " + e.getMessage());
+            System.out.println("Error listarProcesadas: " + e.getMessage());
         }
         return lista;
     }
@@ -122,5 +124,37 @@ public class OrdenDAO {
             System.out.println("Error obtenerIdMesa: " + e.getMessage());
         }
         return -1;
+    }
+
+    public ArrayList<Orden> listarDelDia() {
+        ArrayList<Orden> lista = new ArrayList<>();
+        try (Connection cn = Conexion.conectar()) {
+            String sql = """
+            SELECT o.idOrden, o.fechaHora, o.total, o.estado,
+                   o.idMesa, u.nombre, u.apellido, m.numero AS numeroMesa
+            FROM orden o
+            JOIN usuario u ON o.idUsuario = u.idUsuario
+            JOIN mesa m    ON o.idMesa    = m.idMesa
+            WHERE DATE(o.fechaHora) = CURDATE()
+              AND o.estado IN ('PROCESADA', 'DESPACHADA', 'ANULADA')
+            ORDER BY o.fechaHora ASC
+        """;
+            PreparedStatement ps = cn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Orden o = new Orden();
+                o.setIdOrden(rs.getInt("idOrden"));
+                o.setFechaHora(rs.getTimestamp("fechaHora"));
+                o.setEstado(rs.getString("estado"));
+                o.setIdMesa(rs.getInt("idMesa"));
+                o.setNombreUsuario(rs.getString("nombre") + " " + rs.getString("apellido"));
+                o.setNumeroMesa(rs.getInt("numeroMesa"));
+                o.setTotalGuardado(rs.getDouble("total"));
+                lista.add(o);
+            }
+        } catch (Exception e) {
+            System.out.println("Error listarDelDia: " + e.getMessage());
+        }
+        return lista;
     }
 }

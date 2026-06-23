@@ -55,7 +55,7 @@ public class frmOrden extends javax.swing.JFrame {
                 new String[]{"ID", "Descripción", "Precio Unit.", "Cantidad", "Subtotal"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3;
+                return false;
             }
         };
         tblDetalle.setModel(modelo);
@@ -82,47 +82,6 @@ public class frmOrden extends javax.swing.JFrame {
             }
         });
 
-        modelo.addTableModelListener(e -> {
-            if (actualizandoTabla) {
-                return;
-            }
-            if (e.getColumn() == 3 && e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
-                int fila = e.getFirstRow();
-                if (fila < 0 || fila >= ordenActual.getDetalles().size()) {
-                    return;
-                }
-
-                try {
-                    Object valor = tblDetalle.getModel().getValueAt(fila, 3);
-                    int nuevaCantidad = Integer.parseInt(valor.toString().trim());
-                    DetalleOrden detalle = ordenActual.getDetalles().get(fila);
-
-                    if (nuevaCantidad <= 0) {
-                        javax.swing.SwingUtilities.invokeLater(() -> {
-                            ordenActual.eliminarDetalle(fila);
-                            ((DefaultTableModel) tblDetalle.getModel()).removeRow(fila);
-                            reordenarNumeros();
-                            txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
-                        });
-                    } else {
-                        detalle.setCantidad(nuevaCantidad);
-                        actualizandoTabla = true;
-                        tblDetalle.getModel().setValueAt(
-                                String.format("$%.2f", detalle.getSubtotal()), fila, 4);
-                        actualizandoTabla = false;
-                        txtTotal.setText(String.format("%.2f", ordenActual.getTotal()));
-                    }
-
-                } catch (NumberFormatException ex) {
-                    if (fila < ordenActual.getDetalles().size()) {
-                        actualizandoTabla = true;
-                        tblDetalle.getModel().setValueAt(
-                                ordenActual.getDetalles().get(fila).getCantidad(), fila, 3);
-                        actualizandoTabla = false;
-                    }
-                }
-            }
-        });
     }
 
     private void reordenarNumeros() {
@@ -164,7 +123,7 @@ public class frmOrden extends javax.swing.JFrame {
                     cargarCombos();
                 } else {
                     Categoria cat = (Categoria) seleccion;
-                    cargarProductosPorCategoria(cat.getIdCategoria()); // ya es String
+                    cargarProductosPorCategoria(cat.getIdCategoria()); 
                 }
             }
         });
@@ -203,7 +162,7 @@ public class frmOrden extends javax.swing.JFrame {
         cmbProudcto_Combo.setModel(modelo);
     }
 
-    private void cargarProductosPorCategoria(String idCategoria) { // String no int
+    private void cargarProductosPorCategoria(String idCategoria) { 
         ProductoDAO productoDAO = new ProductoDAO();
         List<Producto> productos = productoDAO.listarPorCategoria(idCategoria);
 
@@ -212,7 +171,7 @@ public class frmOrden extends javax.swing.JFrame {
             modelo.addElement(new Item(
                     p.getIdProducto(),
                     p.getNombreProducto(),
-                    Double.parseDouble(p.getPrecioProducto()), // precioProducto es String
+                    Double.parseDouble(p.getPrecioProducto()), 
                     false
             ));
         }
@@ -282,6 +241,8 @@ public class frmOrden extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel9 = new javax.swing.JLabel();
+        btnActualizar = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -304,14 +265,35 @@ public class frmOrden extends javax.swing.JFrame {
         cmbMesa = new javax.swing.JComboBox<>();
         btnMenu = new javax.swing.JButton();
         btnVerOrdenes = new javax.swing.JButton();
-        btnEliminar = new javax.swing.JButton();
-        btnActualizar = new javax.swing.JButton();
-        btnPagar = new javax.swing.JButton();
+        btnAnular = new javax.swing.JButton();
         btnNuevaOrden = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        btnDespachar = new javax.swing.JButton();
         spnCantidad = new javax.swing.JSpinner();
+        jPanel2 = new javax.swing.JPanel();
 
         jLabel9.setText("Ordenes Pendientes:");
+
+        btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/actualizar.png"))); // NOI18N
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1110, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 610, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ordenes");
@@ -319,7 +301,7 @@ public class frmOrden extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblLogo.setText("jLabel1");
-        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 15, 160, 140));
+        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 160, 140));
 
         jLabel1.setText("ID de Orden:");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 18, -1, -1));
@@ -426,32 +408,14 @@ public class frmOrden extends javax.swing.JFrame {
         });
         getContentPane().add(btnVerOrdenes, new org.netbeans.lib.awtextra.AbsoluteConstraints(451, 516, 144, -1));
 
-        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/eliminarr.png"))); // NOI18N
-        btnEliminar.setText("Eliminar orden");
-        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+        btnAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/eliminarr.png"))); // NOI18N
+        btnAnular.setText("Anular");
+        btnAnular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEliminarActionPerformed(evt);
+                btnAnularActionPerformed(evt);
             }
         });
-        getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(451, 557, 147, -1));
-
-        btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/actualizar.png"))); // NOI18N
-        btnActualizar.setText("Actualizar");
-        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActualizarActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(616, 516, 128, -1));
-
-        btnPagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pagar.png"))); // NOI18N
-        btnPagar.setText("Pagar");
-        btnPagar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPagarActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 557, 122, -1));
+        getContentPane().add(btnAnular, new org.netbeans.lib.awtextra.AbsoluteConstraints(451, 557, 147, -1));
 
         btnNuevaOrden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevaOrden.png"))); // NOI18N
         btnNuevaOrden.setText("Nueva orden");
@@ -462,26 +426,39 @@ public class frmOrden extends javax.swing.JFrame {
         });
         getContentPane().add(btnNuevaOrden, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 516, -1, 30));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 51));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/historial-de-transacciones.png"))); // NOI18N
+        jButton1.setText("Historial del dia");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 510, -1, -1));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(768, Short.MAX_VALUE)
-                .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(262, 262, 262))
+        btnDespachar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pagar.png"))); // NOI18N
+        btnDespachar.setText("Despachar");
+        btnDespachar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDespacharActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnDespachar, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 557, 150, -1));
+        getContentPane().add(spnCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 120, 70, -1));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 102));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1120, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(113, 113, 113)
-                .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(467, Short.MAX_VALUE))
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 620, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 610));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1120, 620));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -491,6 +468,19 @@ public class frmOrden extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbCategoriaActionPerformed
 
     private void btnProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcesarActionPerformed
+
+        if (idOrdenCargada > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Ya hay una orden cargada (#" + idOrdenCargada + ").\nUse 'Nueva orden' para crear una diferente.",
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!ordenActual.tieneDetalles()) {
+            JOptionPane.showMessageDialog(this, "Agregue al menos un producto a la orden.");
+            return;
+        }
+
         if (!ordenActual.tieneDetalles()) {
             JOptionPane.showMessageDialog(this, "Agregue al menos un producto a la orden.");
             return;
@@ -507,7 +497,7 @@ public class frmOrden extends javax.swing.JFrame {
         ordenActual.setIdMesa(mesa.getIdMesa());
         ordenActual.setNumeroMesa(mesa.getNumero());
         ordenActual.setFechaHora(new java.util.Date());
-        ordenActual.setEstado("PENDIENTE");
+        ordenActual.setEstado("PROCESADA");
 
         int idOrden = ordenService.registrarOrden(ordenActual);
 
@@ -578,50 +568,57 @@ public class frmOrden extends javax.swing.JFrame {
         new frmOrdenesPendientes(this).setVisible(true);
     }//GEN-LAST:event_btnVerOrdenesActionPerformed
 
-    private void btnPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarActionPerformed
+    private void btnDespacharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDespacharActionPerformed
         if (idOrdenCargada < 0) {
-            JOptionPane.showMessageDialog(this, "Primero cargue una orden pendiente.");
+            JOptionPane.showMessageDialog(this, "Primero cargue una orden desde 'Ver órdenes'.");
             return;
         }
         int confirmar = JOptionPane.showConfirmDialog(this,
-                "¿Confirmar pago de la Orden #" + idOrdenCargada + "?",
-                "Confirmar pago", JOptionPane.YES_NO_OPTION);
+                "¿Despachar la Orden #" + idOrdenCargada + "? Se generará el ticket.",
+                "Confirmar despacho", JOptionPane.YES_NO_OPTION);
 
         if (confirmar == JOptionPane.YES_OPTION) {
-            boolean ok = ordenService.pagarOrden(idOrdenCargada);
+            boolean ok = ordenService.despacharOrden(idOrdenCargada);
             if (ok) {
                 JOptionPane.showMessageDialog(this,
-                        "Orden #" + idOrdenCargada + " pagada. Ticket generado.");
+                        "Orden #" + idOrdenCargada + " despachada. Ticket generado.");
                 limpiarFormulario();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al procesar el pago.",
+                JOptionPane.showMessageDialog(this, "Error al despachar la orden.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }//GEN-LAST:event_btnPagarActionPerformed
+    }//GEN-LAST:event_btnDespacharActionPerformed
 
-    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+    private void btnAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnularActionPerformed
+        // Solo ADMINISTRADOR puede anular
+        String rol = Sesion.getUsuarioActual().getRol();
+        if (!rol.equals("ADMINISTRADOR")) {
+            JOptionPane.showMessageDialog(this, "Solo el Administrador puede anular órdenes.",
+                    "Acceso denegado", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (idOrdenCargada < 0) {
-            JOptionPane.showMessageDialog(this, "Primero cargue una orden pendiente.");
+            JOptionPane.showMessageDialog(this, "Primero cargue una orden desde 'Ver órdenes'.");
             return;
         }
         int confirmar = JOptionPane.showConfirmDialog(this,
-                "¿Cancelar la Orden #" + idOrdenCargada + "? Esta acción no se puede deshacer.",
-                "Confirmar cancelación", JOptionPane.YES_NO_OPTION);
+                "¿Anular la Orden #" + idOrdenCargada + "? Esta acción no se puede deshacer.",
+                "Confirmar anulación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirmar == JOptionPane.YES_OPTION) {
-            boolean ok = ordenService.cancelarOrden(idOrdenCargada);
+            boolean ok = ordenService.anularOrden(idOrdenCargada);
             if (ok) {
-                JOptionPane.showMessageDialog(this,
-                        "Orden #" + idOrdenCargada + " cancelada. Mesa liberada.");
+                JOptionPane.showMessageDialog(this, "Orden #" + idOrdenCargada + " anulada.");
                 limpiarFormulario();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al cancelar la orden.",
+                JOptionPane.showMessageDialog(this,
+                        "No se puede anular. Solo se pueden anular órdenes PROCESADAS o DESPACHADAS del día de hoy.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
-    }//GEN-LAST:event_btnEliminarActionPerformed
+    }//GEN-LAST:event_btnAnularActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         if (idOrdenCargada < 0) {
@@ -658,6 +655,10 @@ public class frmOrden extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnNuevaOrdenActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        new frmHistorialDia().setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -693,15 +694,16 @@ public class frmOrden extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAgregar;
-    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnAnular;
+    private javax.swing.JButton btnDespachar;
     private javax.swing.JButton btnMenu;
     private javax.swing.JButton btnNuevaOrden;
-    private javax.swing.JButton btnPagar;
     private javax.swing.JButton btnProcesar;
     private javax.swing.JButton btnVerOrdenes;
     private javax.swing.JComboBox<Object> cmbCategoria;
     private javax.swing.JComboBox<Mesa> cmbMesa;
     private javax.swing.JComboBox<Item> cmbProudcto_Combo;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -712,6 +714,7 @@ public class frmOrden extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JSpinner spnCantidad;

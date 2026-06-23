@@ -29,14 +29,14 @@ public class frmMenu extends javax.swing.JFrame {
                 btnProductos.setEnabled(true);
                 btnCombos.setEnabled(true);
                 btnOrdenes.setEnabled(true);
-                btnAgregarUsuario.setVisible(true);  
+                btnAgregarUsuario.setVisible(true);
                 break;
 
             case "SUPERVISOR":
                 btnProductos.setEnabled(true);
                 btnCombos.setEnabled(true);
-                btnOrdenes.setEnabled(true);
-                btnAgregarUsuario.setVisible(false); 
+                btnOrdenes.setEnabled(false);
+                btnAgregarUsuario.setVisible(false);
                 break;
 
             case "MESERO":
